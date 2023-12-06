@@ -26,30 +26,30 @@ mongoose
   })
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
+  });
+
+const verifyUser = (req, res, next) => {
+  const token = req.cookie.token;
+  if (!token) {
+    return res.json("Token is missing");
+  } else {
+    jwt.verify(token, "thespecialsecretkey", (err, decoded) => {
+      if (err) {
+        return res.json("Error with token");
+      } else {
+        if (decoded.role === "admin") {
+          next();
+        } else {
+          return res.json("not admin");
+        }
+      }
+    });
+  }
+};
+
+app.get("/dashboard", verifyUser, (req, res) => {
+  res.json("Success");
 });
-
-const verifyUser = ( req,res,next )=>{
-    const token = req.cookie.token;
-    if(!token){
-        return res.json("Token is missing")
-    }else{
-        jwt.verify( token, "thespecialsecretkey",(err,decoded)=>{
-            if(err){
-                return res.json("Error with token")
-            }else{
-                if(decoded.role === "admin"){
-                    next()
-                }else{
-                    return res.json("not admin")
-                }
-            }
-        } )
-    }
-}
-
-app.get("/dashboard",verifyUser,(req,res)=>{
-    res.json("Success")
-})
 
 app.post("/register", (req, res) => {
   const { name, email, password } = req.body;

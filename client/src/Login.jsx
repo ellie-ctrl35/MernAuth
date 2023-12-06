@@ -16,6 +16,7 @@ const Login = () => {
         if (res.data.Status === "Success"){
             if(res.data.role === "admin"){
                 navigate('/dashboard')
+                console.log('redirects to admin dashboard')
             }else{
                 navigate('/homepage')
             }
